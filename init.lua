@@ -203,10 +203,6 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 -- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
 -- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
--- Keybindings to navigate tabs
-vim.keymap.set('n', '<S-l>', 'gt', { desc = 'Next tab' })
-vim.keymap.set('n', '<S-h>', 'gT', { desc = 'Previous tab' })
-
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
 --
@@ -872,7 +868,7 @@ require('lazy').setup({
     branch = 'main',
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter-intro`
     config = function()
-      local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+      local parsers = { 'bash', 'c', 'python', 'cpp', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
       require('nvim-treesitter').install(parsers)
       vim.api.nvim_create_autocmd('FileType', {
         callback = function(args)
@@ -895,6 +891,31 @@ require('lazy').setup({
           vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
         end,
       })
+    end,
+  },
+
+  { -- Quickly navigate buffers --
+    'ThePrimeagen/harpoon',
+    branch = 'harpoon2',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      local harpoon = require 'harpoon'
+
+      -- REQUIRED
+      harpoon:setup()
+      -- REQUIRED
+
+      vim.keymap.set('n', '<leader>a', function() harpoon:list():add() end, { desc = 'Add to Harpoon' })
+      vim.keymap.set('n', '<S-e>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+
+      vim.keymap.set('n', '<S-h>', function() harpoon:list():select(1) end)
+      vim.keymap.set('n', '<S-j>', function() harpoon:list():select(2) end)
+      vim.keymap.set('n', '<S-k>', function() harpoon:list():select(3) end)
+      vim.keymap.set('n', '<S-l>', function() harpoon:list():select(4) end)
+
+      -- Toggle previous & next buffers stored within Harpoon list
+      vim.keymap.set('n', '<C-S-P>', function() harpoon:list():prev() end)
+      vim.keymap.set('n', '<C-S-N>', function() harpoon:list():next() end)
     end,
   },
 
