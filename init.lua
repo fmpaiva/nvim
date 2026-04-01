@@ -206,11 +206,11 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
 --
---  See `:help wincmd` for a list of all window commands
--- vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
--- vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
--- vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
--- vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+-- See `:help wincmd` for a list of all window commands
+vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -916,32 +916,6 @@ require('lazy').setup({
       -- Toggle previous & next buffers stored within Harpoon list
       vim.keymap.set('n', '<C-S-P>', function() harpoon:list():prev() end)
       vim.keymap.set('n', '<C-S-N>', function() harpoon:list():next() end)
-    end,
-  },
-
-  {
-    'akinsho/toggleterm.nvim',
-    version = '*',
-    config = function()
-      require('toggleterm').setup {
-        size = 15,
-        open_mapping = [[<c-\>]],
-        hide_numbers = true,
-        shade_filetypes = {},
-        start_in_insert = true,
-        insert_mappings = true,
-        terminal_mappings = true,
-        persist_size = true,
-        direction = 'horizontal',
-        close_on_exit = true,
-        shell = vim.o.shell,
-        auto_scroll = true,
-      }
-
-      vim.keymap.set('n', '<leader>tt', '<cmd>ToggleTerm<CR>', { desc = 'Toggle terminal' })
-      vim.keymap.set('n', '<leader>tf', '<cmd>ToggleTerm direction=float<CR>', { desc = 'Float terminal' })
-      vim.keymap.set('n', '<leader>tr', '<cmd>ToggleTerm direction=horizontal<CR>', { desc = 'Horizontal terminal' })
-      vim.keymap.set('n', '<leader>tv', '<cmd>ToggleTerm direction=vertical size=80<CR>', { desc = 'Vertical terminal' })
     end,
   },
 
