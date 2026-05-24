@@ -921,26 +921,68 @@ require('lazy').setup({
 
   {
     'akinsho/toggleterm.nvim',
-    version = '*',
-    config = function()
-      require('toggleterm').setup {
-        open_mapping = [[<c-\>]],
-        hide_numbers = true,
-        shade_filetypes = {},
-        start_in_insert = true,
-        insert_mappings = true,
-        terminal_mappings = true,
-        persist_size = true,
-        direction = 'float',
-        close_on_exit = true,
-        shell = vim.o.shell,
-        auto_scroll = true,
-      }
+    branch = 'main',
+    cmd = { 'ToggleTerm', 'TermExec', 'TermSelect', 'TermNew' },
+    keys = {
+      { '<leader>tt', '<cmd>ToggleTerm direction=float name=main<CR>', desc = '[T]oggle [T]erminal' },
+      { '<leader>tf', '<cmd>ToggleTerm direction=float name=float<CR>', desc = '[T]erminal [F]loat' },
+      { '<leader>th', '<cmd>ToggleTerm direction=horizontal size=15 name=horizontal<CR>', desc = '[T]erminal [H]orizontal' },
+      { '<leader>tv', '<cmd>ToggleTerm direction=vertical size=90 name=vertical<CR>', desc = '[T]erminal [V]ertical' },
+      { '<leader>tn', '<cmd>TermNew direction=float name=terminal<CR>', desc = '[T]erminal [N]ew' },
+      { '<leader>ts', '<cmd>TermSelect<CR>', desc = '[T]erminal [S]elect' },
+      { '<leader>tg', nil, desc = '[T]erminal Lazy[G]it' },
+      { '<leader>tp', nil, desc = '[T]erminal [P]ython' },
+    },
+    opts = {
+      open_mapping = [[<c-\>]],
+      hide_numbers = true,
+      start_in_insert = true,
+      insert_mappings = true,
+      terminal_mappings = true,
+      persist_size = true,
+      persist_mode = true,
+      direction = 'float',
+      close_on_exit = true,
+      shell = vim.o.shell,
+      auto_scroll = true,
+    },
 
-      vim.keymap.set('n', '<leader>tt', '<cmd>ToggleTerm<CR>', { desc = 'Toggle terminal' })
-      vim.keymap.set('n', '<leader>tf', '<cmd>ToggleTerm direction=float<CR>', { desc = 'Float terminal' })
-      vim.keymap.set('n', '<leader>tr', '<cmd>ToggleTerm direction=horizontal<CR>', { desc = 'Horizontal terminal' })
-      vim.keymap.set('n', '<leader>tv', '<cmd>ToggleTerm direction=vertical size=80<CR>', { desc = 'Vertical terminal' })
+    config = function(_, opts)
+      require('toggleterm').setup(opts)
+      local Terminal = require('toggleterm.terminal').Terminal
+      local lazygit = Terminal:new {
+        cmd = 'lazygit',
+        dir = 'git_dir',
+        direction = 'float',
+        hidden = true,
+        name = 'lazygit',
+        float_opts = {
+          border = 'double',
+        },
+        on_open = function(term)
+          vim.cmd 'startinsert!'
+          vim.keymap.set('n', 'q', '<cmd>close<CR>', {
+            buffer = term.bufnr,
+            silent = true,
+            desc = 'Close lazygit terminal',
+          })
+        end,
+      }
+      vim.keymap.set('n', '<leader>tg', function() lazygit:toggle() end, { desc = '[T]erminal Lazy[G]it' })
+
+      local function set_terminal_keymaps()
+        local map_opts = { buffer = 0, silent = true }
+        vim.keymap.set('t', '<Esc><Esc>', [[<C-\><C-n>]], map_opts)
+        vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], map_opts)
+        vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], map_opts)
+        vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], map_opts)
+        vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], map_opts)
+      end
+
+      vim.api.nvim_create_autocmd('TermOpen', {
+        pattern = 'term://*',
+        callback = set_terminal_keymaps,
+      })
     end,
   },
 
